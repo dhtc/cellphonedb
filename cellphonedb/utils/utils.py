@@ -17,6 +17,12 @@ from cellphonedb.src.exceptions.ReadFromPickleException import ReadFromPickleExc
 def read_data_table_from_file(file: str, index_column_first: bool = False, separator: str = '',
                               dtype=None, na_values=None, compression=None) -> pd.DataFrame:
     filename, file_extension = os.path.splitext(file)
+    if file_extension == '.h5ad':
+        #assume obs_names be barcode, var_names be Ensembl Accession Number
+        import scanpy as sc
+        adata = sc.read(file)
+        df = adata.to_df().T
+        return df
 
     if file_extension == '.pickle':
         try:
